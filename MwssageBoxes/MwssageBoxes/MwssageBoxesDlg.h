@@ -38,4 +38,9 @@ public:
 	CString m_strResult;
 	afx_msg void OnClickedButtonOc();
 	afx_msg void OnClickedButtonYnc();
+	afx_msg void OnClickedButtonRc();
+	afx_msg void OnClickedButtonAri();
+	afx_msg void OnClickedButtonOk();
+	afx_msg void OnClickedWhatIsMfc();
+	afx_msg void OnClickedButtonExit();
 };

@@ -60,8 +60,9 @@ CMwssageBoxesDlg::CMwssageBoxesDlg(CWnd* pParent /*=nullptr*/)
 void CMwssageBoxesDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EDIT, m_strResult);
+	DDX_Text(pDX, IDC_EDIT, m_strResult);  // DDX_Control → DDX_Text 변경
 }
+
 
 BEGIN_MESSAGE_MAP(CMwssageBoxesDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -70,6 +71,11 @@ BEGIN_MESSAGE_MAP(CMwssageBoxesDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_YN, &CMwssageBoxesDlg::OnClickedButtonYn)
 	ON_BN_CLICKED(IDC_BUTTON_OC, &CMwssageBoxesDlg::OnClickedButtonOc)
 	ON_BN_CLICKED(IDC_BUTTON_YNC, &CMwssageBoxesDlg::OnClickedButtonYnc)
+	ON_BN_CLICKED(IDC_BUTTON_RC, &CMwssageBoxesDlg::OnClickedButtonRc)
+	ON_BN_CLICKED(IDC_BUTTON_ARI, &CMwssageBoxesDlg::OnClickedButtonAri)
+	ON_BN_CLICKED(IDC_BUTTON_OK, &CMwssageBoxesDlg::OnClickedButtonOk)
+	ON_BN_CLICKED(IDC_WHAT_IS_MFC, &CMwssageBoxesDlg::OnClickedWhatIsMfc)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CMwssageBoxesDlg::OnClickedButtonExit)
 END_MESSAGE_MAP()
 
 
@@ -163,10 +169,14 @@ void CMwssageBoxesDlg::OnClickedButtonYn()
 {
 	int iResults;
 	iResults = AfxMessageBox(_T("YES/NO 버튼을 누르셨습니다."), (MB_YESNO | MB_ICONEXCLAMATION));
-	if (iResults == IDYES)
+	if (iResults == IDYES) {
 		m_strResult = _T("YES 버튼을 클릭하셨습니다.");
-	else if (iResults == IDNO)
+		UpdateData(FALSE);
+	}
+	else if (iResults == IDNO) {
 		m_strResult = _T("NO 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
 }
 
 void CMwssageBoxesDlg::OnClickedButtonOc()
@@ -174,10 +184,14 @@ void CMwssageBoxesDlg::OnClickedButtonOc()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	int iResults;
 	iResults = AfxMessageBox(_T("OK/CANCLE 버튼을 누르셨습니다."), (MB_OKCANCEL | MB_ICONHAND));
-	if (iResults == IDOK)
-		m_strResult = _T("확인 버튼을 클릭하셨습니다.");
-	else
+	if (iResults == IDOK) {
+		m_strResult = _T("OK 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
+	else {
 		m_strResult = _T("CANCLE 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
 }
 
 void CMwssageBoxesDlg::OnClickedButtonYnc()
@@ -185,11 +199,74 @@ void CMwssageBoxesDlg::OnClickedButtonYnc()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	int iResults;
 	iResults = AfxMessageBox(_T("YES/NO/CANCEL 버튼을 누르셨습니다."), (MB_YESNOCANCEL | MB_ICONASTERISK));
-	if (iResults == IDYES)
+	if (iResults == IDYES) {
 		m_strResult = _T("YES 버튼을 클릭하셨습니다.");
-	else if (iResults == IDNO)
+		UpdateData(FALSE);
+	}
+	else if (iResults == IDNO) {
 		m_strResult = _T("NO 버튼을 클릭하셨습니다.");
-	else
+		UpdateData(FALSE);
+	}
+	else {
 		m_strResult = _T("CANCLE 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
 }
-//3번째 버튼부터 제작
+
+void CMwssageBoxesDlg::OnClickedButtonRc()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int iResults;
+	iResults = AfxMessageBox(_T("RETRY/CANCLE 버튼을 누르셨습니다!"), (MB_RETRYCANCEL | MB_ICONQUESTION));
+	if (iResults == IDRETRY) {
+		m_strResult = _T("RETRY 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
+	else {
+		m_strResult = _T("CANCLE 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
+}
+
+void CMwssageBoxesDlg::OnClickedButtonAri()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int iResults;
+	iResults = AfxMessageBox(_T("ABORT/RETRY/IGNORE 버튼을 누르셨습니다."), (MB_ABORTRETRYIGNORE | MB_ICONASTERISK));
+	if (iResults == IDABORT) {
+		m_strResult = _T("ABORT 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
+	else if (iResults == IDRETRY) {
+		m_strResult = _T("RETRY 버튼을 클릭하셨습니다."); 
+		UpdateData(FALSE);
+	}
+	else {
+		m_strResult = _T("IGNORE 버튼을 클릭하셨습니다.");
+		UpdateData(FALSE);
+	}
+}
+
+void CMwssageBoxesDlg::OnClickedButtonOk()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int iResults;
+	iResults = AfxMessageBox(_T("OK 버튼을 누르셨습니다."), (MB_OK | MB_ICONHAND));
+	m_strResult = _T("OK 버튼을 클릭하셨습니다.");
+	UpdateData(FALSE);
+}
+
+void CMwssageBoxesDlg::OnClickedWhatIsMfc()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int iResults;
+	iResults = AfxMessageBox(_T("Microsft Foundation Class 입니다."), MB_OK);
+	m_strResult = _T("MFC 버튼을 클릭하셨습니다.");
+	UpdateData(FALSE);
+}
+
+void CMwssageBoxesDlg::OnClickedButtonExit()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	OnOK();
+}
