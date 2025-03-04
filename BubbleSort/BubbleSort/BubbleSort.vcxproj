@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <ProjectGuid>{EAEB437A-C1E7-55B3-BBD7-2DA1EA1B91CC}</ProjectGuid>
+    <ProjectGuid>{CE9DA38C-4225-23AE-A5C6-8E9857920A76}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>Calc</RootNamespace>
+    <RootNamespace>BubbleSort</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -45,7 +45,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -53,7 +53,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -183,16 +183,16 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Calc.h" />
-    <ClInclude Include="CalcDlg.h" />
+    <ClInclude Include="BubbleSort.h" />
+    <ClInclude Include="BubbleSortDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Calc.cpp" />
-    <ClCompile Include="CalcDlg.cpp" />
+    <ClCompile Include="BubbleSort.cpp" />
+    <ClCompile Include="BubbleSortDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -201,13 +201,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Calc.rc" />
+    <ResourceCompile Include="BubbleSort.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Calc.rc2" />
+    <None Include="res\BubbleSort.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Calc.ico" />
+    <Image Include="res\BubbleSort.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

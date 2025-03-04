@@ -1,11 +1,11 @@
 ﻿
-// CalcDlg.cpp: 구현 파일
+// CalcExDlg.cpp: 구현 파일
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "Calc.h"
-#include "CalcDlg.h"
+#include "CalcEx.h"
+#include "CalcExDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -46,44 +46,44 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CCalcDlg 대화 상자
+// CCalcExDlg 대화 상자
 
 
 
-CCalcDlg::CCalcDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_CALC_DIALOG, pParent)
-	, m_nNum1(_T(""))
-	, m_nNum2(_T(""))
-	, m_nResult(_T(""))
+CCalcExDlg::CCalcExDlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_CALCEX_DIALOG, pParent)
+	, ALL_NUM(_T(""))
+	, AVER_NUM(_T(""))
+	, HAK_NUM(_T(""))
+	, KOREAN_NUM(_T(""))
+	, MATH_NUM(_T(""))
+	, EN_NUM(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CCalcDlg::DoDataExchange(CDataExchange* pDX)
+void CCalcExDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_NUM1, m_nNum1);
-	DDX_Text(pDX, IDC_EDIT_NUM2, m_nNum2);
-	DDX_Text(pDX, IDC_EDIT_RESULT, m_nResult);
+	DDX_Text(pDX, IDC_EDIT_ALL, ALL_NUM);
+	DDX_Text(pDX, IDC_EDIT_AVER, AVER_NUM);
+	DDX_Text(pDX, IDC_EDIT_HAK, HAK_NUM);
+	DDX_Text(pDX, IDC_EDIT_KOREAN, KOREAN_NUM);
+	DDX_Text(pDX, IDC_EDIT_EN, EN_NUM);
+	DDX_Text(pDX, IDC_EDIT_MATH, MATH_NUM);
 }
 
-BEGIN_MESSAGE_MAP(CCalcDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CCalcExDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CCalcDlg::OnClickedButtonAdd)
-	ON_BN_CLICKED(IDC_BUTTON_DIV, &CCalcDlg::OnClickedButtonDiv)
-	ON_BN_CLICKED(IDC_BUTTON_MUL, &CCalcDlg::OnClickedButtonMul)
-	ON_BN_CLICKED(IDC_BUTTON_SUB, &CCalcDlg::OnClickedButtonSub)
-	ON_BN_CLICKED(IDC_BUTTON_EQU, &CCalcDlg::OnClickedButtonEqu)
-	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CCalcDlg::OnClickedButtonClear)
-	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CCalcDlg::OnClickedButtonExit)
+	ON_BN_CLICKED(IDC_BUTTON_INPUT, &CCalcExDlg::OnClickedButtonInput)
 END_MESSAGE_MAP()
 
 
-// CCalcDlg 메시지 처리기
+// CCalcExDlg 메시지 처리기
 
-BOOL CCalcDlg::OnInitDialog()
+BOOL CCalcExDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -117,7 +117,7 @@ BOOL CCalcDlg::OnInitDialog()
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
-void CCalcDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CCalcExDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -134,7 +134,7 @@ void CCalcDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
 
-void CCalcDlg::OnPaint()
+void CCalcExDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -161,79 +161,42 @@ void CCalcDlg::OnPaint()
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
 //  이 함수를 호출합니다.
-HCURSOR CCalcDlg::OnQueryDragIcon()
+HCURSOR CCalcExDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
-void CCalcDlg::OnClickedButtonAdd()
+void CCalcExDlg::OnClickedButtonInput()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 1;
-}
-
-void CCalcDlg::OnClickedButtonDiv()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 4;
-}
-
-void CCalcDlg::OnClickedButtonMul()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 3;
-}
-
-void CCalcDlg::OnClickedButtonSub()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 2;
-}
-
-void CCalcDlg::OnClickedButtonEqu()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	char temp[10];
+	char temp[50];
 	double tmpResult;
-
 	UpdateData(TRUE);
-
-	switch (m_nOption) {
-		case 1:
-			tmpResult = atof(m_nNum1) + atof(m_nNum2);
-			break;
-		case 2:
-			tmpResult = atof(m_nNum1) - atof(m_nNum2);
-			break;
-		case 3:
-			tmpResult = atof(m_nNum1) * atof(m_nNum2);
-			break;
-		case 4:
-			tmpResult = atof(m_nNum1) / atof(m_nNum2);
-			break;
-		default:
-			tmpResult = 0.00;
-			break;
+	tmpResult = atof(KOREAN_NUM) + atof(MATH_NUM) + atof(EN_NUM);
+	sprintf_s(temp, "%.2f", tmpResult);
+	ALL_NUM = temp;
+	tmpResult = (atof(KOREAN_NUM) + atof(MATH_NUM) + atof(EN_NUM)) / 3;
+	sprintf_s(temp, "%.2f", tmpResult);
+	AVER_NUM = temp;
+	if (tmpResult >= 90) {
+		sprintf_s(temp, "A");
+		HAK_NUM = temp;
+	}else if (tmpResult >= 80) {
+		sprintf_s(temp, "B");
+		HAK_NUM = temp;
 	}
-
-	sprintf_s(temp, "%f", tmpResult);
-	m_nResult = temp;
+	else if (tmpResult >= 70) {
+		sprintf_s(temp, "C");
+		HAK_NUM = temp;
+	}
+	else if (tmpResult >= 60) {
+		sprintf_s(temp, "D");
+		HAK_NUM = temp;
+	}
+	else{
+		sprintf_s(temp, "F");
+		HAK_NUM = temp;
+	}
 	UpdateData(FALSE);
-}
-
-void CCalcDlg::OnClickedButtonClear()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	UpdateData(TRUE);
-	m_nNum1 = _T("");
-	m_nNum2 = _T("");
-	m_nResult = _T("");
-	UpdateData(FALSE);
-}
-
-void CCalcDlg::OnClickedButtonExit()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	PostQuitMessage(0);
 }

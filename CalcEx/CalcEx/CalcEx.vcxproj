@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <ProjectGuid>{EAEB437A-C1E7-55B3-BBD7-2DA1EA1B91CC}</ProjectGuid>
+    <ProjectGuid>{F2A28471-14BD-E71D-0A2D-2DB64186ADD5}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>Calc</RootNamespace>
+    <RootNamespace>CalcEx</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -183,16 +183,16 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Calc.h" />
-    <ClInclude Include="CalcDlg.h" />
+    <ClInclude Include="CalcEx.h" />
+    <ClInclude Include="CalcExDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Calc.cpp" />
-    <ClCompile Include="CalcDlg.cpp" />
+    <ClCompile Include="CalcEx.cpp" />
+    <ClCompile Include="CalcExDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -201,13 +201,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Calc.rc" />
+    <ResourceCompile Include="CalcEx.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Calc.rc2" />
+    <None Include="res\CalcEx.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Calc.ico" />
+    <Image Include="res\CalcEx.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

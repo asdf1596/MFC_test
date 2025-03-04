@@ -1,11 +1,11 @@
 ﻿
-// CalcDlg.cpp: 구현 파일
+// BubbleSortDlg.cpp: 구현 파일
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "Calc.h"
-#include "CalcDlg.h"
+#include "BubbleSort.h"
+#include "BubbleSortDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -46,44 +46,50 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CCalcDlg 대화 상자
+// CBubbleSortDlg 대화 상자
 
 
 
-CCalcDlg::CCalcDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_CALC_DIALOG, pParent)
-	, m_nNum1(_T(""))
-	, m_nNum2(_T(""))
-	, m_nResult(_T(""))
+CBubbleSortDlg::CBubbleSortDlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_BUBBLESORT_DIALOG, pParent)
+	, m_n1(0)
+	, m_n2(0)
+	, m_n3(0)
+	, m_n5(0)
+	, m_n4(0)
+	, m_n6(0)
+	, m_n7(0)
+	, m_n8(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CCalcDlg::DoDataExchange(CDataExchange* pDX)
+void CBubbleSortDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_NUM1, m_nNum1);
-	DDX_Text(pDX, IDC_EDIT_NUM2, m_nNum2);
-	DDX_Text(pDX, IDC_EDIT_RESULT, m_nResult);
+	//  DDX_Text(pDX, IDC_EDIT1, m_n1);
+	DDX_Text(pDX, IDC_EDIT2, m_n2);
+	DDX_Text(pDX, IDC_EDIT3, m_n3);
+	DDX_Text(pDX, IDC_EDIT5, m_n5);
+	DDX_Text(pDX, IDC_EDIT4, m_n4);
+	DDX_Text(pDX, IDC_EDIT6, m_n6);
+	DDX_Text(pDX, IDC_EDIT7, m_n7);
+	DDX_Text(pDX, IDC_EDIT8, m_n8);
+	DDX_Text(pDX, IDC_EDIT1, m_n1);
 }
 
-BEGIN_MESSAGE_MAP(CCalcDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CBubbleSortDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CCalcDlg::OnClickedButtonAdd)
-	ON_BN_CLICKED(IDC_BUTTON_DIV, &CCalcDlg::OnClickedButtonDiv)
-	ON_BN_CLICKED(IDC_BUTTON_MUL, &CCalcDlg::OnClickedButtonMul)
-	ON_BN_CLICKED(IDC_BUTTON_SUB, &CCalcDlg::OnClickedButtonSub)
-	ON_BN_CLICKED(IDC_BUTTON_EQU, &CCalcDlg::OnClickedButtonEqu)
-	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CCalcDlg::OnClickedButtonClear)
-	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CCalcDlg::OnClickedButtonExit)
+	ON_BN_CLICKED(IDC_BUTTON_SORT, &CBubbleSortDlg::OnClickedButtonSort)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CBubbleSortDlg::OnClickedButtonExit)
 END_MESSAGE_MAP()
 
 
-// CCalcDlg 메시지 처리기
+// CBubbleSortDlg 메시지 처리기
 
-BOOL CCalcDlg::OnInitDialog()
+BOOL CBubbleSortDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -117,7 +123,7 @@ BOOL CCalcDlg::OnInitDialog()
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
-void CCalcDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CBubbleSortDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -134,7 +140,7 @@ void CCalcDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
 
-void CCalcDlg::OnPaint()
+void CBubbleSortDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -161,79 +167,51 @@ void CCalcDlg::OnPaint()
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
 //  이 함수를 호출합니다.
-HCURSOR CCalcDlg::OnQueryDragIcon()
+HCURSOR CBubbleSortDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
-void CCalcDlg::OnClickedButtonAdd()
+void CBubbleSortDlg::OnClickedButtonSort()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 1;
-}
-
-void CCalcDlg::OnClickedButtonDiv()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 4;
-}
-
-void CCalcDlg::OnClickedButtonMul()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 3;
-}
-
-void CCalcDlg::OnClickedButtonSub()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_nOption = 2;
-}
-
-void CCalcDlg::OnClickedButtonEqu()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	char temp[10];
-	double tmpResult;
-
 	UpdateData(TRUE);
+	CClientDC dc(this);
 
-	switch (m_nOption) {
-		case 1:
-			tmpResult = atof(m_nNum1) + atof(m_nNum2);
-			break;
-		case 2:
-			tmpResult = atof(m_nNum1) - atof(m_nNum2);
-			break;
-		case 3:
-			tmpResult = atof(m_nNum1) * atof(m_nNum2);
-			break;
-		case 4:
-			tmpResult = atof(m_nNum1) / atof(m_nNum2);
-			break;
-		default:
-			tmpResult = 0.00;
-			break;
+	static int nSource[4], nDest[4];
+	int i, j, temp, k = 4;
+
+	nSource[0] = m_n1;
+	nSource[1] = m_n2;
+	nSource[2] = m_n3;
+	nSource[3] = m_n4;
+
+	for (i = 0; i <= k; i++)
+	{
+		for (j = 0; j < k-1-i; j++)
+		{
+			if (nSource[j] > nSource[j + 1])
+			{
+				temp = nSource[j];
+				nSource[j] = nSource[j + 1];
+				nSource[j + 1] = temp;
+			}
+		}
 	}
+	for (i = 0; i < k; i++) {
+		nDest[i] = nSource[i];
+	}
+	m_n5 = nDest[0];
+	m_n6 = nDest[1];
+	m_n7 = nDest[2];
+	m_n8 = nDest[3];
 
-	sprintf_s(temp, "%f", tmpResult);
-	m_nResult = temp;
 	UpdateData(FALSE);
 }
 
-void CCalcDlg::OnClickedButtonClear()
+void CBubbleSortDlg::OnClickedButtonExit()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	UpdateData(TRUE);
-	m_nNum1 = _T("");
-	m_nNum2 = _T("");
-	m_nResult = _T("");
-	UpdateData(FALSE);
-}
-
-void CCalcDlg::OnClickedButtonExit()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	PostQuitMessage(0);
+	OnOK();
 }
