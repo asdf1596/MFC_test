@@ -1,20 +1,22 @@
 ﻿
-// SelectSortDlg.h: 헤더 파일
+// ClassAdd1Dlg.h: 헤더 파일
 //
 
 #pragma once
+#include "CInputDlg.h"
 
-
-// CSelectSortDlg 대화 상자
-class CSelectSortDlg : public CDialogEx
+// CClassAdd1Dlg 대화 상자
+class CClassAdd1Dlg : public CDialogEx
 {
 // 생성입니다.
 public:
-	CSelectSortDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
+	CClassAdd1Dlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
+
+	CInputDlg m_InputDlg;
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_SELECTSORT_DIALOG };
+	enum { IDD = IDD_CLASSADD1_DIALOG };
 #endif
 
 	protected:
@@ -32,13 +34,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	int m_n1;
-	int m_n2;
-	int m_n3;
-	int m_n4;
-	int m_n5;
-	int m_n6;
-	int m_n7;
-	int m_n8;
-	afx_msg void OnClickedButtonSort();
+	afx_msg void OnClickedButtonInput();
+	afx_msg void OnClickedButtonOutput();
+	afx_msg void OnClickedButtonExit();
 };
