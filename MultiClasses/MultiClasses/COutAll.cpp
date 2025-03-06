@@ -38,7 +38,14 @@ void COutAll::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(COutAll, CDialogEx)
+//	ON_COMMAND(ID_APP_EXIT, &COutAll::OnAppExit)
 END_MESSAGE_MAP()
 
 
 // COutAll 메시지 처리기
+
+//void COutAll::OnAppExit()
+//{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+//	PostQuitMessage(0);
+//}

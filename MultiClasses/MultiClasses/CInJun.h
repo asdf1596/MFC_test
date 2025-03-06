@@ -21,4 +21,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CString m_strJunIn1;
+	CString m_strJunIn2;
+	CString m_strJunIn3;
 };

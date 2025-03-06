@@ -173,11 +173,16 @@ void CMultiClassesDlg::OnClickedButtonGyoInput()
 void CMultiClassesDlg::OnClickedButtonAllOutput()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_OutAllDlg.m_strJunOut1 = m_InJunDlg.m_strJun1;
-	//멤버 변수 만들기 하기
+	m_OutAllDlg.m_strJunOut1 = m_InJunDlg.m_strJunIn1;
+	m_OutAllDlg.m_strJunOut2 = m_InJunDlg.m_strJunIn2;
+	m_OutAllDlg.m_strJunOut3 = m_InJunDlg.m_strJunIn3;
+	m_OutAllDlg.m_strGyoOut1 = m_InGyoDlg.m_strGyoIn1;
+	m_OutAllDlg.m_strGyoOut2 = m_InGyoDlg.m_strGyoIn2;
+	m_OutAllDlg.DoModal();
 }
 
 void CMultiClassesDlg::OnClickedButtonExit()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	PostQuitMessage(0);
 }

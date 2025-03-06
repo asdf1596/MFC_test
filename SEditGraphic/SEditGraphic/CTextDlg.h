@@ -2,19 +2,19 @@
 #include "afxdialogex.h"
 
 
-// CInGyo 대화 상자
+// CTextDlg 대화 상자
 
-class CInGyo : public CDialogEx
+class CTextDlg : public CDialogEx
 {
-	DECLARE_DYNAMIC(CInGyo)
+	DECLARE_DYNAMIC(CTextDlg)
 
 public:
-	CInGyo(CWnd* pParent = nullptr);   // 표준 생성자입니다.
-	virtual ~CInGyo();
+	CTextDlg(CWnd* pParent = nullptr);   // 표준 생성자입니다.
+	virtual ~CTextDlg();
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG_GYO_INPUT };
+	enum { IDD = IDD_DIALOG_TEXT };
 #endif
 
 protected:
@@ -22,6 +22,5 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	CString m_strGyoIn1;
-	CString m_strGyoIn2;
+	CString m_strTextInput;
 };

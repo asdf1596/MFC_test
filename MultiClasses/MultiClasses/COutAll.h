@@ -27,4 +27,5 @@ public:
 	CString m_strGyoOut2;
 	CString m_strJunOut2;
 	CString m_strJunOut3;
+//	afx_msg void OnAppExit();
 };
