@@ -1,5 +1,4 @@
-﻿
-// SEditGraphicView.cpp: CSEditGraphicView 클래스의 구현
+﻿// SEditGraphicView.cpp: CSEditGraphicView 클래스의 구현
 //
 
 #include "pch.h"
@@ -116,10 +115,10 @@ void CSEditGraphicView::OnDraw(CDC* pDC)
 	}
 	case 4:
 	{
-		CBrush brush(HS_DIAGCROSS, RGB(255,90,0));
+		CBrush brush(HS_DIAGCROSS, RGB(255, 90, 0));
 
-		CBrush* pOldBrush = pDC->SelectObject(&brush);
-		pDC->RoundRect(200, 200, 400, 400,50,50);
+		CBrush *pOldBrush = pDC->SelectObject(&brush);
+		pDC->RoundRect(200, 200, 400, 400, 50, 50);
 		pDC->SelectObject(pOldBrush);
 		brush.DeleteObject();
 		break;
@@ -130,7 +129,7 @@ void CSEditGraphicView::OnDraw(CDC* pDC)
 		bitmap.LoadBitmap(IDB_BITMAP2);
 		CBrush brush(&bitmap);
 
-		CBrush* pOldBrush = pDC->SelectObject(&brush);
+		CBrush *pOldBrush = pDC->SelectObject(&brush);
 
 		pDC->SetBkColor(TRANSPARENT);
 
@@ -140,11 +139,10 @@ void CSEditGraphicView::OnDraw(CDC* pDC)
 
 		break;
 	}
+	}
 }
 
-
 // CSEditGraphicView 인쇄
-
 
 void CSEditGraphicView::OnFilePrintPreview()
 {
@@ -182,7 +180,6 @@ void CSEditGraphicView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
-
 // CSEditGraphicView 진단
 
 #ifdef _DEBUG
@@ -203,30 +200,39 @@ CSEditGraphicDoc* CSEditGraphicView::GetDocument() const // 디버그되지 않�
 }
 #endif //_DEBUG
 
-
 // CSEditGraphicView 메시지 처리기
 
 void CSEditGraphicView::OnFigCir()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_nOption = 1;
+	Invalidate();
 }
 
 void CSEditGraphicView::OnFigApple()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_nOption = 5;
+	Invalidate();
 }
 
 void CSEditGraphicView::OnFigCross()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_nOption = 4;
+	Invalidate();
 }
 
 void CSEditGraphicView::OnFigRect()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_nOption = 2;
+	Invalidate();
 }
 
 void CSEditGraphicView::OnFigLine()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_nOption = 3;
+	Invalidate();
 }

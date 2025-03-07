@@ -1,17 +1,27 @@
-﻿class CSEditGraphicView : public CView
+﻿
+// MDrawingView.h: CMDrawingView 클래스의 인터페이스
+//
+
+#pragma once
+
+
+class CMDrawingView : public CView
 {
 protected: // serialization에서만 만들어집니다.
-	CSEditGraphicView() noexcept;
-	DECLARE_DYNCREATE(CSEditGraphicView)
+	CMDrawingView() noexcept;
+	DECLARE_DYNCREATE(CMDrawingView)
 
-	// 특성입니다.
+// 특성입니다.
 public:
-	CSEditGraphicDoc* GetDocument() const;
+	CMDrawingDoc* GetDocument() const;
 
-	// 작업입니다.
+	int m_ptX;
+	int m_ptY;
+
+// 작업입니다.
 public:
 
-	// 재정의입니다.
+// 재정의입니다.
 public:
 	virtual void OnDraw(CDC* pDC);  // 이 뷰를 그리기 위해 재정의되었습니다.
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -20,9 +30,9 @@ protected:
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 
-	// 구현입니다.
+// 구현입니다.
 public:
-	virtual ~CSEditGraphicView();
+	virtual ~CMDrawingView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -30,17 +40,18 @@ public:
 
 protected:
 
-	// 생성된 메시지 맵 함수
+// 생성된 메시지 맵 함수
 protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 public:
-	int m_nOption;
-	afx_msg void OnFigCir();
-	afx_msg void OnFigApple();
-	afx_msg void OnFigCross();
-	afx_msg void OnFigRect();
-	afx_msg void OnFigLine();
-}; // <-- Missing semicolon added here
+	virtual void OnInitialUpdate();
+};
+
+#ifndef _DEBUG  // MDrawingView.cpp의 디버그 버전
+inline CMDrawingDoc* CMDrawingView::GetDocument() const
+   { return reinterpret_cast<CMDrawingDoc*>(m_pDocument); }
+#endif
+
