@@ -1,16 +1,16 @@
 ﻿
-// MBmpDlg.h: 헤더 파일
+// BmpExDlg.h: 헤더 파일
 //
 
 #pragma once
 
 
-// CMBmpDlg 대화 상자
-class CMBmpDlg : public CDialogEx
+// CBmpExDlg 대화 상자
+class CBmpExDlg : public CDialogEx
 {
 // 생성입니다.
 public:
-	CMBmpDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
+	CBmpExDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
 
 	HINSTANCE m_hInstance;
 
@@ -19,7 +19,7 @@ public:
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_MBMP_DIALOG };
+	enum { IDD = IDD_BMPEX_DIALOG };
 #endif
 
 	protected:
@@ -37,12 +37,12 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButton1();
-	afx_msg void OnFileExit();
-	afx_msg void OnHelpAbout();
-	afx_msg void OnZoomIn();
-	afx_msg void OnZoomOut();
+	afx_msg void OnExit();
 	int m_menuID;
-	afx_msg void OnClickedButtonExit();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnZoomIn1();
+	afx_msg void OnZoomIn2();
+	afx_msg void OnZoomOut1();
+	afx_msg void OnZoomOut2();
+	afx_msg void OnClickedButtonExit();
 };

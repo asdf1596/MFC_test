@@ -1,11 +1,11 @@
 ﻿
-// MBmpDlg.cpp: 구현 파일
+// WinProExeDlg.cpp: 구현 파일
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "MBmp.h"
-#include "MBmpDlg.h"
+#include "WinProExe.h"
+#include "WinProExeDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -31,8 +31,6 @@ public:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
-public:
-	int m_menuID;
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -45,41 +43,34 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
-// CMBmpDlg 대화 상자
+// CWinProExeDlg 대화 상자
 
 
 
-CMBmpDlg::CMBmpDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_MBMP_DIALOG, pParent)
+CWinProExeDlg::CWinProExeDlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_WINPROEXE_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CMBmpDlg::DoDataExchange(CDataExchange* pDX)
+void CWinProExeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CMBmpDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CWinProExeDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_COMMAND(ID_FILE_EXIT, &CMBmpDlg::OnFileExit)
-	ON_COMMAND(ID_HELP_ABOUT, &CMBmpDlg::OnHelpAbout)
-	ON_COMMAND(ID_ZOOM_IN, &CMBmpDlg::OnZoomIn)
-	ON_COMMAND(ID_ZOOM_OUT, &CMBmpDlg::OnZoomOut)
-	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CMBmpDlg::OnClickedButtonExit)
-	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
-// CMBmpDlg 메시지 처리기
+// CWinProExeDlg 메시지 처리기
 
-BOOL CMBmpDlg::OnInitDialog()
+BOOL CWinProExeDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -113,7 +104,7 @@ BOOL CMBmpDlg::OnInitDialog()
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
-void CMBmpDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CWinProExeDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -130,7 +121,7 @@ void CMBmpDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
 
-void CMBmpDlg::OnPaint()
+void CWinProExeDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -151,84 +142,14 @@ void CMBmpDlg::OnPaint()
 	}
 	else
 	{
-		CPaintDC dc(this);
-		HBITMAP hbitmap = ::LoadBitmap(m_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
-
-		HDC hMemDC = CreateCompatibleDC(NULL);
-
-		SelectObject(hMemDC, hbitmap);
-
-		switch (m_menuID) {
-		case ID_ZOOM_IN:
-			StretchBlt(dc.m_hDC, 0, 0, m_nWidth, m_nHeight, hMemDC, 0, 0, 300, 300, SRCCOPY);
-			break;
-		case ID_ZOOM_OUT:
-			StretchBlt(dc.m_hDC, 0, 0, 150, 150, hMemDC, 0, 0, 300, 300, SRCCOPY);
-			break;
-
-		default:
-			::StretchBlt(dc.m_hDC, 50, 50, 300, 300, hMemDC, 0, 0, 250, 250, SRCCOPY);
-		}
-
-		::DeleteDC(hMemDC);
-		::DeleteObject(hbitmap);
-		
 		CDialogEx::OnPaint();
 	}
 }
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
 //  이 함수를 호출합니다.
-HCURSOR CMBmpDlg::OnQueryDragIcon()
+HCURSOR CWinProExeDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-void CMBmpDlg::OnBnClickedButton1()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
-
-void CMBmpDlg::OnFileExit()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-	OnOK();
-}
-
-void CMBmpDlg::OnHelpAbout()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-	CAboutDlg dlg;
-	dlg.DoModal();
-}
-
-void CMBmpDlg::OnZoomIn()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-	m_menuID = ID_ZOOM_IN;
-	Invalidate();
-}
-
-void CMBmpDlg::OnZoomOut()
-{
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-	m_menuID = ID_ZOOM_OUT;
-	Invalidate();		
-}
-
-void CMBmpDlg::OnClickedButtonExit()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	OnOK();
-}
-
-void CMBmpDlg::OnSize(UINT nType, int cx, int cy)
-{
-	CDialogEx::OnSize(nType, cx, cy);
-	m_nWidth = cx;
-	m_nHeight = cy;
-	Invalidate();
-
-	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-}
