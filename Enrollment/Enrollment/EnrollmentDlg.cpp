@@ -64,13 +64,12 @@ CEnrollmentDlg::CEnrollmentDlg(CWnd* pParent /*=nullptr*/)
 void CEnrollmentDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Radio(pDX, IDC_RADIO_ONLINE, m_rOnline);
 	DDX_Text(pDX, IDC_EDIT_NAME, m_strName);
 	DDX_Text(pDX, IDC_EDIT_NUM, m_strNum);
 	DDX_Text(pDX, IDC_EDIT_CELL, m_strCell);
 	DDX_Check(pDX, IDC_CHECK_A, m_chA);
 	DDX_Check(pDX, IDC_CHECK_B, m_chB);
-	DDX_CBIndex(pDX, IDC_COMBO_POINT1, m_cbPoint1);
+	DDX_Control(pDX, IDC_COMBO_POINT1, m_cbPoint1);
 	DDX_Control(pDX, IDC_COMBO_POINT2, m_cbPoint2);
 	DDX_Control(pDX, IDC_RADIO_ONLINE, m_rOnline);
 	DDX_Control(pDX, IDC_LIST_VIEW, m_listView);
@@ -80,6 +79,10 @@ BEGIN_MESSAGE_MAP(CEnrollmentDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_INPUT, &CEnrollmentDlg::OnClickedButtonInput)
+	ON_BN_CLICKED(IDC_BUTTON_DEL, &CEnrollmentDlg::OnClickedButtonDel)
+	ON_BN_CLICKED(IDC_BUTTON_INIT, &CEnrollmentDlg::OnClickedButtonInit)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CEnrollmentDlg::OnClickedButtonExit)
 END_MESSAGE_MAP()
 
 
@@ -115,6 +118,32 @@ BOOL CEnrollmentDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	for (int i = 1; i < 11; i++) {
+		CString sIndex;
+		sIndex.Format(_T("%d"), i);
+		m_cbPoint1.AddString(sIndex);
+	}
+
+	for (int i = 1; i < 11; i++) {
+		CString sIndex;
+		sIndex.Format(_T("%d"), i);
+		m_cbPoint2.AddString(sIndex);
+	}
+
+	char *szText[6] = { "학번", "이름","연락처","등록방법","시험유형","총배점" };
+	int nWidth[6] = { 50,70,100,70,70,70 };
+
+	LV_COLUMN iCol;
+	iCol.mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
+	iCol.fmt = LVCFMT_LEFT;
+	m_listView.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
+
+	for (int i = 0; i < 6; i++) {
+		iCol.pszText = szText[i];
+		iCol.iSubItem = i;
+		iCol.cx = nWidth[i];
+		m_listView.InsertColumn(i, &iCol);
+	}
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -168,3 +197,159 @@ HCURSOR CEnrollmentDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CEnrollmentDlg::Init()
+{
+	// TODO: 여기에 구현 코드 추가.
+	UpdateData(TRUE);
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_NUM);
+	m_strName.Empty();
+	m_strNum.Empty();
+	m_strCell.Empty();
+
+	m_chA = m_chB = FALSE;
+
+	m_rOnline.SetCheck(BST_UNCHECKED);
+
+	m_cbPoint1.SetCurSel(0);
+	m_cbPoint2.SetCurSel(0);
+
+	pEdit->SetFocus();
+	UpdateData(FALSE);
+
+}
+
+void CEnrollmentDlg::OnClickedButtonInput()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	char szText[100] = "";
+	int nIndex = 0;
+	UpdateData(TRUE);
+	LVITEM iItem;
+	iItem.mask = LVIF_TEXT;
+	iItem.iItem = nIndex;
+
+	iItem.iSubItem = 0;
+	sprintf_s(szText, "%s", m_strNum);
+	iItem.pszText = (LPSTR)szText;
+	m_listView.InsertItem(&iItem);
+
+	iItem.iSubItem = 1;
+	sprintf_s(szText, "%S", m_strName);
+	iItem.pszText = (LPSTR)szText;
+	m_listView.SetItem(&iItem);
+
+	iItem.iSubItem = 2;
+	sprintf_s(szText, "%S", m_strCell);
+	iItem.pszText = (LPSTR)szText;
+	m_listView.SetItem(&iItem);
+
+	iItem.iSubItem = 3;
+
+	if (m_rOnline.GetCheck() == BST_CHECKED) {
+		sprintf_s(szText, "%s", _T("온라인"));
+	}
+	else {
+		sprintf_s(szText, "%s", _T("방문"));
+	}
+
+	iItem.pszText = (LPSTR)szText;
+	m_listView.SetItem(&iItem);
+	/////////////////////////////////////////
+
+	CString selCombo1, selCombo2;
+	if ((m_chA == TRUE) && (m_chB == FALSE)) {
+		m_cbPoint1.GetLBText(m_cbPoint1.GetCurSel(), selCombo1);
+
+		int cb10 = 0;
+		int sum10 = 0;
+
+		cb10 = _ttoi(selCombo1);
+		sum10 = sum10 + cb10 * 20;
+
+		iItem.iSubItem = 4;
+		sprintf_s(szText, "%s", _T("주관식"));
+		iItem.pszText = (LPSTR)szText;
+		m_listView.SetItem(&iItem);
+
+		iItem.iSubItem = 5;
+		sprintf_s(szText, "%d", sum10);
+		iItem.pszText = (LPSTR)szText;
+		m_listView.SetItem(&iItem);
+
+	}
+	else if ((m_chA == FALSE) && (m_chB == TRUE)) {
+		m_cbPoint2.GetLBText(m_cbPoint2.GetCurSel(), selCombo2);
+
+		int cb20 = 0;
+		int sum20 = 0;
+
+		cb20 = _ttoi(selCombo2);
+		sum20 = sum20 + cb20 * 10;
+
+		iItem.iSubItem = 4;
+		sprintf_s(szText, "%s", _T("객관식"));
+		iItem.pszText = (LPSTR)szText;
+		m_listView.SetItem(&iItem);
+
+		iItem.iSubItem = 5;
+		sprintf_s(szText, "%d", sum20);
+		iItem.pszText = (LPSTR)szText;
+		m_listView.SetItem(&iItem);
+	}
+	else if ((m_chA == TRUE) && (m_chB == TRUE)) {
+		m_cbPoint1.GetLBText(m_cbPoint1.GetCurSel(), selCombo1);
+		m_cbPoint2.GetLBText(m_cbPoint2.GetCurSel(), selCombo2);
+
+		int cb30 = _ttoi(selCombo1);
+		int cb31 = _ttoi(selCombo2);
+		int sum30 = 0;
+
+		sum30 = cb30 * 20 + cb31 * 10;
+
+		iItem.iSubItem = 4;
+		sprintf_s(szText, "%s", _T("혼합형"));
+		iItem.pszText = (LPSTR)szText;
+		m_listView.SetItem(&iItem);
+
+		iItem.iSubItem = 5;
+		sprintf_s(szText, "%d", sum30);
+		iItem.pszText = (LPSTR)szText;
+		m_listView.SetItem(&iItem);
+	}
+	else if ((m_chA == FALSE) && (m_chB == FALSE)) {
+		MessageBox(_T("시험 유형을 선택하세요"), _T("입력에러"), MB_ICONSTOP | MB_OK);
+	}
+	Init();
+	nIndex++;
+	UpdateData(FALSE);
+}
+
+	
+
+
+	void CEnrollmentDlg::OnClickedButtonDel()
+	{
+		// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+		for (int nItem = 0; nItem < m_listView.GetItemCount();) {
+			if (m_listView.GetItemState(nItem, LVIS_SELECTED) == LVIS_SELECTED) {
+				m_listView.DeleteItem(nItem);
+			}
+			else {
+				++nItem;
+			}
+		}
+		UpdateData(FALSE);
+	}
+
+	void CEnrollmentDlg::OnClickedButtonInit()
+	{
+		// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+		Init();
+	}
+
+	void CEnrollmentDlg::OnClickedButtonExit()
+	{
+		// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+		OnOK();
+	}

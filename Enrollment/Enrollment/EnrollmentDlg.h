@@ -50,4 +50,9 @@ public:
 	CButton m_rOnline;
 	CListCtrl m_listView;
 	int m_nSelected;
+	void Init();
+	afx_msg void OnClickedButtonInput();
+	afx_msg void OnClickedButtonDel();
+	afx_msg void OnClickedButtonInit();
+	afx_msg void OnClickedButtonExit();
 };
