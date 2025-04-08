@@ -52,11 +52,13 @@ END_MESSAGE_MAP()
 
 CMemExDlg::CMemExDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MEMEX_DIALOG, pParent)
-	, m_strCell(_T(""))
-	, m_strName(_T(""))
+	, m_strCell(_T(""))      // 텍스트 초기화
+	, m_strName(_T(""))      // 텍스트 초기화
+	, m_nSelected(0)         // nSelected 변수 초기화
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
+
 
 void CMemExDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -72,6 +74,10 @@ BEGIN_MESSAGE_MAP(CMemExDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_INPUT, &CMemExDlg::OnClickedButtonInput)
+	ON_BN_CLICKED(IDC_BUTTON_DEL, &CMemExDlg::OnClickedButtonDel)
+	ON_BN_CLICKED(IDC_BUTTON_INIT, &CMemExDlg::OnClickedButtonInit)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CMemExDlg::OnClickedButtonExit)
 END_MESSAGE_MAP()
 
 
@@ -108,7 +114,29 @@ BOOL CMemExDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 
+	char* szText[4] = { "Korea", "Japan","China","America" };
+	char* szText2[4] = { "이름","연락처","선호관광지","선호국가"};
+	for (int i = 0; i < 4; i++) {
+		CString sIndex;
+		sIndex.Format(_T("%s"), szText[i]);
+		m_cbPoint.AddString(sIndex);
+	}
 
+
+	LV_COLUMN iCol;
+	iCol.mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
+	iCol.fmt = LVCFMT_LEFT;
+	m_listView.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
+
+
+
+	int nWidth[6] = { 50,50,70,70};
+	for (int i = 0; i < 4; i++) {
+		iCol.pszText = szText2[i];
+		iCol.iSubItem = i;
+		iCol.cx = nWidth[i];
+		m_listView.InsertColumn(i, &iCol);
+	}
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -162,3 +190,93 @@ HCURSOR CMemExDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CMemExDlg::Init()
+{
+	// TODO: 여기에 구현 코드 추가.
+	UpdateData(TRUE);
+	m_strName.Empty();
+	m_strCell.Empty();
+
+	m_rMountain.SetCheck(BST_UNCHECKED);
+
+	m_cbPoint.SetCurSel(0);
+
+	UpdateData(FALSE);
+}
+
+void CMemExDlg::OnClickedButtonInput()
+{
+	int nIndex = m_listView.GetItemCount();  // 리스트 뷰의 아이템 개수로 인덱스를 설정
+	char szText[100] = "";
+	UpdateData(TRUE);  // UI에서 데이터를 읽어옴
+
+	LVITEM iItem;
+	iItem.mask = LVIF_TEXT;
+	iItem.iItem = nIndex;  // 새로운 항목 추가
+
+	// 이름
+	iItem.iSubItem = 0;
+	// CString을 LPCTSTR로 변환하여 사용
+	sprintf_s(szText, "%s", (LPCTSTR)m_strName);  // CString을 LPCTSTR로 변환
+	iItem.pszText = szText;
+	m_listView.InsertItem(&iItem);
+
+	// 전화번호
+	iItem.iSubItem = 1;
+	sprintf_s(szText, "%s", (LPCTSTR)m_strCell);  // CString을 LPCTSTR로 변환
+	iItem.pszText = szText;
+	m_listView.SetItem(&iItem);
+
+	// 산/바다
+	iItem.iSubItem = 2;
+	if (m_rMountain.GetCheck() == BST_CHECKED) {
+		sprintf_s(szText, "%s", _T("산"));
+	}
+	else {
+		sprintf_s(szText, "%s", _T("바다"));
+	}
+	iItem.pszText = szText;
+	m_listView.SetItem(&iItem);
+
+	// 점수
+	CString selCombo;
+	m_cbPoint.GetLBText(m_cbPoint.GetCurSel(), selCombo);
+	iItem.iSubItem = 3;
+	// CString을 LPCTSTR로 변환하여 사용
+	sprintf_s(szText, "%s", (LPCTSTR)selCombo);  // CString을 LPCTSTR로 변환
+	iItem.pszText = szText;
+	m_listView.SetItem(&iItem);
+
+	// 초기화
+	Init();  // 입력 필드를 초기화
+
+	UpdateData(FALSE);  // UI 업데이트
+}
+
+void CMemExDlg::OnClickedButtonDel()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	for (int nItem = 0; nItem < m_listView.GetItemCount();) {
+		if (m_listView.GetItemState(nItem, LVIS_SELECTED) == LVIS_SELECTED) {
+			m_listView.DeleteItem(nItem);
+		}
+		else {
+			++nItem;
+		}
+	}
+	UpdateData(FALSE);
+
+}
+
+void CMemExDlg::OnClickedButtonInit()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	Init();
+}
+
+void CMemExDlg::OnClickedButtonExit()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	OnOK();
+}
