@@ -235,12 +235,12 @@ void CEnrollmentDlg::OnClickedButtonInput()
 	m_listView.InsertItem(&iItem);
 
 	iItem.iSubItem = 1;
-	sprintf_s(szText, "%S", m_strName);
+	sprintf_s(szText, "%s", m_strName);
 	iItem.pszText = (LPSTR)szText;
 	m_listView.SetItem(&iItem);
 
 	iItem.iSubItem = 2;
-	sprintf_s(szText, "%S", m_strCell);
+	sprintf_s(szText, "%s", m_strCell);
 	iItem.pszText = (LPSTR)szText;
 	m_listView.SetItem(&iItem);
 

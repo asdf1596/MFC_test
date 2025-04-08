@@ -13,7 +13,6 @@
 #define IDC_CHECK_A                     1003
 #define IDC_CHECK_B                     1004
 #define IDC_RADIO_ONLINE                1005
-#define IDC_RADIO2                      1006
 #define IDC_RADIO_OFFLINE               1006
 #define IDC_COMBO_POINT1                1007
 #define IDC_COMBO_POINT2                1008
