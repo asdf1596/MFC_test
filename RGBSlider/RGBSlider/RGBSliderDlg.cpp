@@ -163,9 +163,9 @@ void CRGBSliderDlg::OnPaint()
 		CRect rect;
 		CClientDC rgbdc(GetDlgItem(IDC_STATIC_RGB));
 		CStatic *pSRGB = (CStatic *)GetDlgItem(IDC_STATIC_RGB);
-		pSRGB->GetClientRect(&rect);
+		pSRGB->GetClientRect(rect);
 		rgbdc.FillSolidRect(rect, m_cRGB);
-		pSRGB->InvalidateRect(rect, TRUE);
+		pSRGB->InvalidateRect(rect);
 	}
 }
 
@@ -185,15 +185,7 @@ HCURSOR CRGBSliderDlg::OnQueryDragIcon()
 
 
 
-
-//미완
-
-
-
-
-
-
-
+// 미완
 
 
 
