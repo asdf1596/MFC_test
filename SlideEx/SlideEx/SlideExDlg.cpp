@@ -1,11 +1,11 @@
 ﻿
-// SliderExDlg.cpp: 구현 파일
+// SlideExDlg.cpp: 구현 파일
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "SliderEx.h"
-#include "SliderExDlg.h"
+#include "SlideEx.h"
+#include "SlideExDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -46,38 +46,40 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CSliderExDlg 대화 상자
+// CSlideExDlg 대화 상자
 
 
 
-CSliderExDlg::CSliderExDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_SLIDEREX_DIALOG, pParent)
-	, m_nVer(0)
+CSlideExDlg::CSlideExDlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_SLIDEEX_DIALOG, pParent)
 	, m_nHor(0)
+	, m_nVer(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CSliderExDlg::DoDataExchange(CDataExchange* pDX)
+void CSlideExDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_SLIDER_HOR, m_hor);
-	DDX_Control(pDX, IDC_SLIDER_VER, m_ver);
-	DDX_Text(pDX, IDC_EDIT_VER, m_nVer);
+	DDX_Control(pDX, IDC_SLIDER_HOR, m_sldHor);
+	DDX_Control(pDX, IDC_SLIDER_VER, m_sldVer);
 	DDX_Text(pDX, IDC_EDIT_HOR, m_nHor);
+	DDX_Text(pDX, IDC_EDIT_VER, m_nVer);
 }
 
-BEGIN_MESSAGE_MAP(CSliderExDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CSlideExDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_SLIDER_HOR, &CSlideExDlg::OnNMCustomdrawSliderHor)
 	ON_WM_HSCROLL()
+	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
 
-// CSliderExDlg 메시지 처리기
+// CSlideExDlg 메시지 처리기
 
-BOOL CSliderExDlg::OnInitDialog()
+BOOL CSlideExDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -108,13 +110,13 @@ BOOL CSliderExDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 
-	m_hor.SetRange(0, 100); // 슬라이더의 범위를 0~100으로 설정합니다.
-	m_ver.SetRange(-100, 100); // 슬라이더의 범위를 0~100으로 설정합니다.
+	m_sldHor.SetRange(0, 100);
+	m_sldVer.SetRange(-100, 100);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
-void CSliderExDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CSlideExDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -131,7 +133,7 @@ void CSliderExDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
 
-void CSliderExDlg::OnPaint()
+void CSlideExDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -158,25 +160,45 @@ void CSliderExDlg::OnPaint()
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
 //  이 함수를 호출합니다.
-HCURSOR CSliderExDlg::OnQueryDragIcon()
+HCURSOR CSlideExDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
-void CSliderExDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CSlideExDlg::OnNMCustomdrawSliderHor(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+void CSlideExDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
-	if (pScrollBar == ((CScrollBar*)&m_ver) || pScrollBar == ((CScrollBar*)&m_hor)) {
-		int nPosVer = m_ver.GetPos();
-		int nPosHor = m_hor.GetPos();
-		m_nVer = nPosVer;
+
+
+	if (pScrollBar == ((CScrollBar*)&m_sldVer) || pScrollBar == ((CScrollBar*)&m_sldHor)) {
+		int nPosHor = m_sldHor.GetPos();
 		m_nHor = nPosHor;
-		
+
 		UpdateData(FALSE);
 	}
 	else {
 		CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 	}
 }
+
+void CSlideExDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (pScrollBar == ((CScrollBar*)&m_sldVer) || pScrollBar == ((CScrollBar*)&m_sldHor)) {
+		int nPosVer = m_sldVer.GetPos();
+		m_nVer = nPosVer;
+
+		UpdateData(FALSE);
+	}
+	else {
+	CDialogEx::OnVScroll(nSBCode, nPos, pScrollBar);
+}}
