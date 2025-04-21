@@ -125,7 +125,7 @@ void CMFCSerial5Dlg::OnClickedButtonScan()
 		msg += name + _T("\n");
 	}
 
-	MessageBox(msg, _T("포트 검색 결과"), MB_OK | MB_ICONINFORMATION);
+	//MessageBox(msg, _T("포트 검색 결과"), MB_OK | MB_ICONINFORMATION);
 }
 
 void CMFCSerial5Dlg::OnClickedButtonConnect()
@@ -148,7 +148,7 @@ void CMFCSerial5Dlg::OnClickedButtonConnect()
 	m_pSerial = new Serial(portStr.c_str(), m_eBaud);
 
 	if (m_pSerial->IsConnected()) {
-		MessageBox(_T("연결 성공!"), _T("알림"), MB_OK | MB_ICONINFORMATION);
+		//MessageBox(_T("연결 성공!"), _T("알림"), MB_OK | MB_ICONINFORMATION);
 
 		m_bRunningThread = true;
 		m_pReadThread = AfxBeginThread(ReadDataThread, this);
@@ -255,11 +255,12 @@ CString formattedValue = FormatByBase(value, _T("RX"));
 		CString existingText;
 		m_editValue.GetWindowText(existingText);
 		if (!existingText.IsEmpty()) existingText += _T("\r\n");
-		existingText += formattedValue;
+		WriteToCSV(formattedValue, _T("RX"));
+		existingText += _T("[RX] ") + formattedValue;
 		m_editValue.SetWindowText(existingText);
 		m_editValue.LineScroll(m_editValue.GetLineCount());
 
-		WriteToCSV(formattedValue, _T("RX"));
+		
 		delete pStr;
 	}
 	return 0;
@@ -278,17 +279,26 @@ CString CMFCSerial5Dlg::FormatByBase(int value, const CString& direction)
 		result.Format(_T("%d"), value);   // 10진수 형식으로 변환
 	}
 
-	return _T("[") + direction + _T("] ") + result;
+	return result;
 }
 
 
 bool IsNumeric(const CString& str)
 {
 	for (int i = 0; i < str.GetLength(); ++i) {
-		if (!_istdigit(str[i])) return false;
+		if (!isdigit(str[i])) return false;
 	}
 	return !str.IsEmpty();
 }
+
+bool IsHexString(const CString& str)
+{
+	for (int i = 0; i < str.GetLength(); ++i) {
+		if (!isxdigit(str[i])) return false;
+	}
+	return !str.IsEmpty();
+}
+
 
 
 void CMFCSerial5Dlg::OnClickedButtonSend()
@@ -297,14 +307,19 @@ void CMFCSerial5Dlg::OnClickedButtonSend()
 		CString strToSend;
 		GetDlgItem(IDC_EDIT_SEND)->GetWindowText(strToSend);
 
-		// 원본 문자열을 그대로 전송
-		std::string sendStr = CStringA(strToSend);
-		m_pSerial->WriteData(sendStr.c_str(), sendStr.length());
-
-		// 로그에 진수 포맷 (숫자일 때만)
+		strToSend.Trim();  // 앞뒤 공백 제거
 		CString formattedValue;
-		int value = _ttoi(strToSend); // 숫자면 변환, 아니면 0이지만 표시용
-		if (IsNumeric(strToSend)) {
+		std::string sendStr;
+
+		if (GetSelectedRadix(this) == RADIX_HEX && IsHexString(strToSend)) {
+			// 16진수 문자열 -> 숫자로 변환
+			unsigned int value = _tcstoul(strToSend, NULL, 16);
+			formattedValue.Format(_T("0x%X"), value);
+			sendStr = CStringA(strToSend);  // 그대로 전송
+		}
+		else if (IsNumeric(strToSend)) {
+			// 10진수 문자열
+			int value = _ttoi(strToSend);
 			switch (GetSelectedRadix(this)) {
 			case RADIX_DEC:
 				formattedValue.Format(_T("%d"), value);
@@ -316,11 +331,16 @@ void CMFCSerial5Dlg::OnClickedButtonSend()
 				formattedValue.Format(_T("%o"), value);
 				break;
 			}
+			sendStr = CStringA(strToSend);  // 그대로 전송
 		}
 		else {
-			// 숫자 아니면 그냥 원문 출력
+			// 숫자가 아닌 일반 문자 (예: a, A)
 			formattedValue = strToSend;
+			sendStr = CStringA(strToSend);
 		}
+
+		// 전송
+		m_pSerial->WriteData(sendStr.c_str(), sendStr.length());
 
 		// 로그 출력
 		CString existingText;
@@ -336,6 +356,7 @@ void CMFCSerial5Dlg::OnClickedButtonSend()
 		MessageBox(_T("시리얼이 연결되어 있지 않습니다."), _T("오류"), MB_OK | MB_ICONERROR);
 	}
 }
+
 
 
 void CMFCSerial5Dlg::OnClickedCheckDec()
