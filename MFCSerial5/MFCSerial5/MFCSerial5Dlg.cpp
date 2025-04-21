@@ -10,6 +10,7 @@
 #include <iostream>
 #include <initguid.h>
 #include <devguid.h>
+#include <fstream>
 #pragma comment(lib, "setupapi.lib")
 
 #ifdef _DEBUG
@@ -42,6 +43,7 @@ std::vector<std::string> listAvailablePorts() {
 
 CMFCSerial5Dlg::CMFCSerial5Dlg(CWnd* pParent)
 	: CDialogEx(IDD_MFCSERIAL5_DIALOG, pParent), m_eBaud(0)
+	, m_eSend(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -52,6 +54,10 @@ void CMFCSerial5Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_PORT, m_port);
 	DDX_Text(pDX, IDC_EDIT_BAUD, m_eBaud);
 	DDX_Control(pDX, IDC_EDIT_VALUE, m_editValue);
+	DDX_Text(pDX, IDC_EDIT_SEND, m_eSend);
+	DDX_Control(pDX, IDC_CHECK_DEC, m_cDec);
+	DDX_Control(pDX, IDC_CHECK_HEX, m_cHex);
+	DDX_Control(pDX, IDC_CHECK_OCT, m_cOct);
 }
 
 BEGIN_MESSAGE_MAP(CMFCSerial5Dlg, CDialogEx)
@@ -62,6 +68,10 @@ BEGIN_MESSAGE_MAP(CMFCSerial5Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SCAN, &CMFCSerial5Dlg::OnClickedButtonScan)
 	ON_BN_CLICKED(IDC_BUTTON_DISCONNECT, &CMFCSerial5Dlg::OnClickedButtonDisconnect)
 	ON_MESSAGE(WM_USER + 1, &CMFCSerial5Dlg::OnSerialReceived)
+	ON_BN_CLICKED(IDC_BUTTON_SEND, &CMFCSerial5Dlg::OnClickedButtonSend)
+	ON_BN_CLICKED(IDC_CHECK_DEC, &CMFCSerial5Dlg::OnClickedCheckDec)
+	ON_BN_CLICKED(IDC_CHECK_HEX, &CMFCSerial5Dlg::OnClickedCheckHex)
+	ON_BN_CLICKED(IDC_CHECK_OCT, &CMFCSerial5Dlg::OnClickedCheckOct)
 END_MESSAGE_MAP()
 
 BOOL CMFCSerial5Dlg::OnInitDialog()
@@ -196,24 +206,155 @@ UINT CMFCSerial5Dlg::ReadDataThread(LPVOID pParam)
 
 	return 0;
 }	
+void WriteToCSV(const CString& data, const CString& direction)
+{
+	CString logFilePath = _T("C:\\Users\\infor\\OneDrive\\바탕 화면\\log_test\\chat_log4.csv");
+
+	// 파일이 처음 생성될 때 헤더 추가
+	BOOL fileExists = PathFileExists(logFilePath);
+	std::ofstream file(CT2A(logFilePath), std::ios::app);
+
+	if (file.is_open()) {
+		if (!fileExists) {
+			file << "시간,방향,값\n";
+		}
+
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+
+		char timeBuffer[100];
+		snprintf(timeBuffer, sizeof(timeBuffer), "%04d-%02d-%02d %02d:%02d:%02d",
+			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+
+		file << timeBuffer << "," << CStringA(direction) << "," << CStringA(data) << std::endl;
+		file.close();
+	}
+	else {
+		AfxMessageBox(_T("CSV 파일을 열 수 없습니다."), MB_ICONERROR);
+	}
+}
+
+
+
+enum RadixType { RADIX_DEC, RADIX_HEX, RADIX_OCT };
+
+RadixType GetSelectedRadix(CMFCSerial5Dlg* dlg) {
+	if (dlg->m_cHex.GetCheck()) return RADIX_HEX;
+	if (dlg->m_cOct.GetCheck()) return RADIX_OCT;
+	return RADIX_DEC;
+}
+
 LRESULT CMFCSerial5Dlg::OnSerialReceived(WPARAM wParam, LPARAM lParam)
 {
 	CString* pStr = reinterpret_cast<CString*>(lParam);
 	if (pStr) {
+		int value = _ttoi(*pStr);  // 항상 10진수로 파싱
+CString formattedValue = FormatByBase(value, _T("RX"));
+
+
 		CString existingText;
-		m_editValue.GetWindowText(existingText); // 기존 텍스트 읽기
+		m_editValue.GetWindowText(existingText);
+		if (!existingText.IsEmpty()) existingText += _T("\r\n");
+		existingText += formattedValue;
+		m_editValue.SetWindowText(existingText);
+		m_editValue.LineScroll(m_editValue.GetLineCount());
 
-		if (!existingText.IsEmpty())
-			existingText += _T("\r\n");
-
-		existingText += *pStr; // 새로운 줄 추가
-
-		m_editValue.SetWindowText(existingText); // 텍스트 업데이트
-
-		int nLineCount = m_editValue.GetLineCount();
-		m_editValue.LineScroll(nLineCount); // 마지막 줄까지 스크롤
-
+		WriteToCSV(formattedValue, _T("RX"));
 		delete pStr;
 	}
 	return 0;
+}
+CString CMFCSerial5Dlg::FormatByBase(int value, const CString& direction)
+{
+	CString result;
+
+	if (m_cHex.GetCheck()) {
+		result.Format(_T("0x%X"), value); // 16진수 형식으로 변환
+	}
+	else if (m_cOct.GetCheck()) {
+		result.Format(_T("%o"), value);  // 8진수 형식으로 변환 (0 안 붙임)
+	}
+	else {
+		result.Format(_T("%d"), value);   // 10진수 형식으로 변환
+	}
+
+	return _T("[") + direction + _T("] ") + result;
+}
+
+
+bool IsNumeric(const CString& str)
+{
+	for (int i = 0; i < str.GetLength(); ++i) {
+		if (!_istdigit(str[i])) return false;
+	}
+	return !str.IsEmpty();
+}
+
+
+void CMFCSerial5Dlg::OnClickedButtonSend()
+{
+	if (m_pSerial && m_pSerial->IsConnected()) {
+		CString strToSend;
+		GetDlgItem(IDC_EDIT_SEND)->GetWindowText(strToSend);
+
+		// 원본 문자열을 그대로 전송
+		std::string sendStr = CStringA(strToSend);
+		m_pSerial->WriteData(sendStr.c_str(), sendStr.length());
+
+		// 로그에 진수 포맷 (숫자일 때만)
+		CString formattedValue;
+		int value = _ttoi(strToSend); // 숫자면 변환, 아니면 0이지만 표시용
+		if (IsNumeric(strToSend)) {
+			switch (GetSelectedRadix(this)) {
+			case RADIX_DEC:
+				formattedValue.Format(_T("%d"), value);
+				break;
+			case RADIX_HEX:
+				formattedValue.Format(_T("0x%X"), value);
+				break;
+			case RADIX_OCT:
+				formattedValue.Format(_T("%o"), value);
+				break;
+			}
+		}
+		else {
+			// 숫자 아니면 그냥 원문 출력
+			formattedValue = strToSend;
+		}
+
+		// 로그 출력
+		CString existingText;
+		m_editValue.GetWindowText(existingText);
+		if (!existingText.IsEmpty()) existingText += _T("\r\n");
+		existingText += _T("[TX] ") + formattedValue;
+		m_editValue.SetWindowText(existingText);
+		m_editValue.LineScroll(m_editValue.GetLineCount());
+
+		WriteToCSV(formattedValue, _T("TX"));
+	}
+	else {
+		MessageBox(_T("시리얼이 연결되어 있지 않습니다."), _T("오류"), MB_OK | MB_ICONERROR);
+	}
+}
+
+
+void CMFCSerial5Dlg::OnClickedCheckDec()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_cHex.SetCheck(FALSE);
+	m_cOct.SetCheck(FALSE);
+}
+
+void CMFCSerial5Dlg::OnClickedCheckHex()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_cDec.SetCheck(FALSE);
+	m_cOct.SetCheck(FALSE);
+}
+
+void CMFCSerial5Dlg::OnClickedCheckOct()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_cDec.SetCheck(FALSE);
+	m_cHex.SetCheck(FALSE);
 }

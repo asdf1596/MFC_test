@@ -17,6 +17,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
+	CString FormatByBase(int value, const CString& direction);
 
 protected:
 	HICON m_hIcon;
@@ -43,4 +44,12 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg void OnClickedButtonSend();
+	CString m_eSend;
+	CButton m_cDec;
+	CButton m_cHex;
+	CButton m_cOct;
+	afx_msg void OnClickedCheckDec();
+	afx_msg void OnClickedCheckHex();
+	afx_msg void OnClickedCheckOct();
 };
