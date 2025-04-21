@@ -195,7 +195,7 @@ UINT CMFCSerial5Dlg::ReadDataThread(LPVOID pParam)
 	}
 
 	return 0;
-}
+}	
 LRESULT CMFCSerial5Dlg::OnSerialReceived(WPARAM wParam, LPARAM lParam)
 {
 	CString* pStr = reinterpret_cast<CString*>(lParam);
