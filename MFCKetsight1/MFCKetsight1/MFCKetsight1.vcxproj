@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <ProjectGuid>{068F3D67-927E-3017-7919-51203218C4FC}</ProjectGuid>
+    <ProjectGuid>{6E7BE185-C764-B985-059C-6A41F18C8E1E}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>MFCSerial3</RootNamespace>
+    <RootNamespace>MFCKetsight1</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -88,11 +88,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,13 +159,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -183,33 +185,33 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Include\visa.h" />
+    <ClInclude Include="C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Include\visatype.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MFCSerial3.h" />
-    <ClInclude Include="MFCSerial3Dlg.h" />
+    <ClInclude Include="MFCKetsight1.h" />
+    <ClInclude Include="MFCKetsight1Dlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SerialClass.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MFCSerial3.cpp" />
-    <ClCompile Include="MFCSerial3Dlg.cpp" />
+    <ClCompile Include="MFCKetsight1.cpp" />
+    <ClCompile Include="MFCKetsight1Dlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Serial.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MFCSerial3.rc" />
+    <ResourceCompile Include="MFCKetsight1.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MFCSerial3.rc2" />
+    <None Include="res\MFCKetsight1.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\MFCSerial3.ico" />
+    <Image Include="res\MFCKetsight1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
