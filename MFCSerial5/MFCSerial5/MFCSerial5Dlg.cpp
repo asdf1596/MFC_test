@@ -72,6 +72,7 @@ BEGIN_MESSAGE_MAP(CMFCSerial5Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_DEC, &CMFCSerial5Dlg::OnClickedCheckDec)
 	ON_BN_CLICKED(IDC_CHECK_HEX, &CMFCSerial5Dlg::OnClickedCheckHex)
 	ON_BN_CLICKED(IDC_CHECK_OCT, &CMFCSerial5Dlg::OnClickedCheckOct)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CMFCSerial5Dlg::OnBnClickedButtonExit)
 END_MESSAGE_MAP()
 
 BOOL CMFCSerial5Dlg::OnInitDialog()
@@ -378,4 +379,10 @@ void CMFCSerial5Dlg::OnClickedCheckOct()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_cDec.SetCheck(FALSE);
 	m_cHex.SetCheck(FALSE);
+}
+
+void CMFCSerial5Dlg::OnBnClickedButtonExit()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	OnOK();
 }

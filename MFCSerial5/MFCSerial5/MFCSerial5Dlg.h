@@ -52,4 +52,5 @@ public:
 	afx_msg void OnClickedCheckDec();
 	afx_msg void OnClickedCheckHex();
 	afx_msg void OnClickedCheckOct();
+	afx_msg void OnBnClickedButtonExit();
 };

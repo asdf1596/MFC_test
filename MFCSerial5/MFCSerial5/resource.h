@@ -17,8 +17,9 @@
 #define IDC_BUTTON_SEND                 1007
 #define IDC_CHECK_OCT                   1008
 #define IDC_CHECK_DEC                   1009
-#define IDC_CHECK_HEC                   1010
 #define IDC_CHECK_HEX                   1010
+#define IDC_BUTTON_SEND2                1011
+#define IDC_BUTTON_EXIT                 1011
 
 // Next default values for new objects
 // 
