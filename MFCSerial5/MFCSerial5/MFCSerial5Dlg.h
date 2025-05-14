@@ -31,6 +31,12 @@ protected:
 	// 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+	DWORD m_lastDataTime; // 마지막 데이터 수신 시간
+	static const DWORD TIMEOUT_MS = 5000; // 5초 타임아웃
+	bool m_bReconnecting; // 재연결 중 플래그
+
+	// 메시지 핸들러 선언
+	afx_msg LRESULT OnReconnect(WPARAM wParam, LPARAM lParam);
 public:
 	CComboBox m_port;
 	int m_eBaud;

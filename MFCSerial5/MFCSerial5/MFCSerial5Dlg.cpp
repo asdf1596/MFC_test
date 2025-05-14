@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <initguid.h>
+#include <deque>
 #include <devguid.h>
 #include <fstream>
 #pragma comment(lib, "setupapi.lib")
@@ -81,6 +82,8 @@ BOOL CMFCSerial5Dlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);
 	SetIcon(m_hIcon, FALSE);
 	m_eBaud = 9600;
+	m_lastDataTime = GetTickCount(); // 타임아웃 초기화
+	m_bReconnecting = false; // 재연결 플래그 초기화
 	UpdateData(FALSE);
 
 	return TRUE;
@@ -131,6 +134,16 @@ void CMFCSerial5Dlg::OnClickedButtonScan()
 
 void CMFCSerial5Dlg::OnClickedButtonConnect()
 {
+	m_bRunningThread = false;
+
+	if (m_pReadThread) {
+		WaitForSingleObject(m_pReadThread->m_hThread, INFINITE);
+		m_pReadThread = nullptr;
+	}
+
+	delete m_pSerial;
+	m_pSerial = nullptr;
+
 	int sel = m_port.GetCurSel();
 	if (sel == CB_ERR) {
 		MessageBox(_T("먼저 COM 포트를 선택하세요."), _T("오류"), MB_OK | MB_ICONWARNING);
@@ -174,7 +187,7 @@ void CMFCSerial5Dlg::OnClickedButtonDisconnect()
 		delete m_pSerial;
 		m_pSerial = nullptr;
 
-		MessageBox(_T("연결이 해제되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION);
+		//MessageBox(_T("연결이 해제되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION);
 	}
 	else {
 		MessageBox(_T("해제할 연결이 없습니다."), _T("정보"), MB_OK | MB_ICONWARNING);
@@ -189,51 +202,69 @@ UINT CMFCSerial5Dlg::ReadDataThread(LPVOID pParam)
 	char incomingByte[1];
 	std::string lineBuffer;
 
-	while (pDlg->m_bRunningThread && pDlg->m_pSerial && pDlg->m_pSerial->IsConnected()) {
-		int bytesRead = pDlg->m_pSerial->ReadData(incomingByte, 1);
-		if (bytesRead > 0) {
-			char ch = incomingByte[0];
-			if (ch == '\n') {
-				CString strValue(lineBuffer.c_str());
-				::PostMessage(pDlg->m_hWnd, WM_USER + 1, 0, (LPARAM)new CString(strValue));
-				lineBuffer.clear();
+	pDlg->m_lastDataTime = GetTickCount();
+	pDlg->m_bReconnecting = false;
+
+	while (pDlg->m_bRunningThread) {
+		if (pDlg->m_pSerial && pDlg->m_pSerial->IsConnected()) {
+			int bytesRead = pDlg->m_pSerial->ReadData(incomingByte, 1);
+			if (bytesRead > 0) {
+				pDlg->m_lastDataTime = GetTickCount();
+				char ch = incomingByte[0];
+				if (ch == '\n') {
+					CString strValue(lineBuffer.c_str());
+					::PostMessage(pDlg->m_hWnd, WM_USER + 1, 0, (LPARAM)new CString(strValue));
+					lineBuffer.clear();
+				}
+				else if (ch != '\r') {
+					lineBuffer += ch;
+				}
 			}
-			else if (ch != '\r') {
-				lineBuffer += ch;
+			else {
+				if (GetTickCount() - pDlg->m_lastDataTime > TIMEOUT_MS && !pDlg->m_bReconnecting) {
+					pDlg->m_bReconnecting = true;
+					::PostMessage(pDlg->m_hWnd, WM_USER + 2, 0, 0);
+				}
+			}
+		}
+		else {
+			if (!pDlg->m_bReconnecting) {
+				pDlg->m_bReconnecting = true;
+				::PostMessage(pDlg->m_hWnd, WM_USER + 2, 0, 0);
 			}
 		}
 		Sleep(1);
 	}
 
 	return 0;
-}	
-void WriteToCSV(const CString& data, const CString& direction)
-{
-	CString logFilePath = _T("C:\\Users\\infor\\OneDrive\\바탕 화면\\log_test\\chat_log4.csv");
-
-	// 파일이 처음 생성될 때 헤더 추가
-	BOOL fileExists = PathFileExists(logFilePath);
-	std::ofstream file(CT2A(logFilePath), std::ios::app);
-
-	if (file.is_open()) {
-		if (!fileExists) {
-			file << "시간,방향,값\n";
-		}
-
-		SYSTEMTIME st;
-		GetLocalTime(&st);
-
-		char timeBuffer[100];
-		snprintf(timeBuffer, sizeof(timeBuffer), "%04d-%02d-%02d %02d:%02d:%02d",
-			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-
-		file << timeBuffer << "," << CStringA(direction) << "," << CStringA(data) << std::endl;
-		file.close();
-	}
-	else {
-		AfxMessageBox(_T("CSV 파일을 열 수 없습니다."), MB_ICONERROR);
-	}
 }
+//void WriteToCSV(const CString& data, const CString& direction)
+//{
+//	CString logFilePath = _T("C:\\Users\\infor\\OneDrive\\바탕 화면\\log_test\\chat_log4.csv");
+//
+//	// 파일이 처음 생성될 때 헤더 추가
+//	BOOL fileExists = PathFileExists(logFilePath);
+//	std::ofstream file(CT2A(logFilePath), std::ios::app);
+//
+//	if (file.is_open()) {
+//		if (!fileExists) {
+//			file << "시간,방향,값\n";
+//		}
+//
+//		SYSTEMTIME st;
+//		GetLocalTime(&st);
+//
+//		char timeBuffer[100];
+//		snprintf(timeBuffer, sizeof(timeBuffer), "%04d-%02d-%02d %02d:%02d:%02d",
+//			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+//
+//		file << timeBuffer << "," << CStringA(direction) << "," << CStringA(data) << std::endl;
+//		file.close();
+//	}
+//	else {
+//		AfxMessageBox(_T("CSV 파일을 열 수 없습니다."), MB_ICONERROR);
+//	}
+//}
 
 
 
@@ -247,25 +278,35 @@ RadixType GetSelectedRadix(CMFCSerial5Dlg* dlg) {
 
 LRESULT CMFCSerial5Dlg::OnSerialReceived(WPARAM wParam, LPARAM lParam)
 {
+	static std::deque<CString> recentValues;  // 최신 값 5개 저장용
+
 	CString* pStr = reinterpret_cast<CString*>(lParam);
 	if (pStr) {
-		int value = _ttoi(*pStr);  // 항상 10진수로 파싱
-CString formattedValue = FormatByBase(value, _T("RX"));
+		int value = _ttoi(*pStr);  // 10진수로 파싱
+		CString formattedValue = FormatByBase(value, _T("RX"));
 
+		// 큐에 새 값 추가
+		recentValues.push_back(formattedValue);
 
-		CString existingText;
-		m_editValue.GetWindowText(existingText);
-		if (!existingText.IsEmpty()) existingText += _T("\r\n");
-		WriteToCSV(formattedValue, _T("RX"));
-		existingText += _T("[RX] ") + formattedValue;
-		m_editValue.SetWindowText(existingText);
+		// 최대 5개 유지
+		if (recentValues.size() > 5)
+			recentValues.pop_front();
+
+		// 전체 출력 문자열 조합
+		CString displayText;
+		for (const auto& val : recentValues) {
+			displayText += val + _T("\r\n");
+		}
+
+		// UI에 출력
+		m_editValue.SetWindowText(displayText);
 		m_editValue.LineScroll(m_editValue.GetLineCount());
 
-		
 		delete pStr;
 	}
 	return 0;
 }
+
 CString CMFCSerial5Dlg::FormatByBase(int value, const CString& direction)
 {
 	CString result;
@@ -351,7 +392,7 @@ void CMFCSerial5Dlg::OnClickedButtonSend()
 		m_editValue.SetWindowText(existingText);
 		m_editValue.LineScroll(m_editValue.GetLineCount());
 
-		WriteToCSV(formattedValue, _T("TX"));
+		//WriteToCSV(formattedValue, _T("TX"));
 	}
 	else {
 		MessageBox(_T("시리얼이 연결되어 있지 않습니다."), _T("오류"), MB_OK | MB_ICONERROR);
@@ -384,5 +425,18 @@ void CMFCSerial5Dlg::OnClickedCheckOct()
 void CMFCSerial5Dlg::OnBnClickedButtonExit()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (m_pSerial) {
+		m_bRunningThread = false;
+
+		if (m_pReadThread) {
+			WaitForSingleObject(m_pReadThread->m_hThread, INFINITE);
+			m_pReadThread = nullptr;
+		}
+
+		delete m_pSerial;
+		m_pSerial = nullptr;
+
+		//MessageBox(_T("연결이 해제되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION);
+	}
 	OnOK();
 }
