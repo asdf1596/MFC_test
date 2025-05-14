@@ -55,10 +55,6 @@ void CMFCSerial5Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_PORT, m_port);
 	DDX_Text(pDX, IDC_EDIT_BAUD, m_eBaud);
 	DDX_Control(pDX, IDC_EDIT_VALUE, m_editValue);
-	DDX_Text(pDX, IDC_EDIT_SEND, m_eSend);
-	DDX_Control(pDX, IDC_CHECK_DEC, m_cDec);
-	DDX_Control(pDX, IDC_CHECK_HEX, m_cHex);
-	DDX_Control(pDX, IDC_CHECK_OCT, m_cOct);
 }
 
 BEGIN_MESSAGE_MAP(CMFCSerial5Dlg, CDialogEx)
@@ -69,11 +65,8 @@ BEGIN_MESSAGE_MAP(CMFCSerial5Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SCAN, &CMFCSerial5Dlg::OnClickedButtonScan)
 	ON_BN_CLICKED(IDC_BUTTON_DISCONNECT, &CMFCSerial5Dlg::OnClickedButtonDisconnect)
 	ON_MESSAGE(WM_USER + 1, &CMFCSerial5Dlg::OnSerialReceived)
-	ON_BN_CLICKED(IDC_BUTTON_SEND, &CMFCSerial5Dlg::OnClickedButtonSend)
-	ON_BN_CLICKED(IDC_CHECK_DEC, &CMFCSerial5Dlg::OnClickedCheckDec)
-	ON_BN_CLICKED(IDC_CHECK_HEX, &CMFCSerial5Dlg::OnClickedCheckHex)
-	ON_BN_CLICKED(IDC_CHECK_OCT, &CMFCSerial5Dlg::OnClickedCheckOct)
 	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CMFCSerial5Dlg::OnBnClickedButtonExit)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 BOOL CMFCSerial5Dlg::OnInitDialog()
@@ -134,6 +127,11 @@ void CMFCSerial5Dlg::OnClickedButtonScan()
 
 void CMFCSerial5Dlg::OnClickedButtonConnect()
 {
+	// 버튼 캡션 변경
+	CButton* pButton = (CButton*)GetDlgItem(IDC_BUTTON_CONNECT); // 버튼 ID로 변경
+	pButton->SetWindowText(_T("연결중.."));
+
+	// 기존 코드
 	m_bRunningThread = false;
 
 	if (m_pReadThread) {
@@ -147,6 +145,7 @@ void CMFCSerial5Dlg::OnClickedButtonConnect()
 	int sel = m_port.GetCurSel();
 	if (sel == CB_ERR) {
 		MessageBox(_T("먼저 COM 포트를 선택하세요."), _T("오류"), MB_OK | MB_ICONWARNING);
+		pButton->SetWindowText(_T("연결")); // 원래 캡션 복원
 		return;
 	}
 
@@ -162,8 +161,8 @@ void CMFCSerial5Dlg::OnClickedButtonConnect()
 	m_pSerial = new Serial(portStr.c_str(), m_eBaud);
 
 	if (m_pSerial->IsConnected()) {
-		//MessageBox(_T("연결 성공!"), _T("알림"), MB_OK | MB_ICONINFORMATION);
-
+		// 연결 성공 후 1초 대기 후 캡션 복원
+		SetTimer(1, 1000, nullptr); // 1초 타이머 설정
 		m_bRunningThread = true;
 		m_pReadThread = AfxBeginThread(ReadDataThread, this);
 	}
@@ -171,7 +170,19 @@ void CMFCSerial5Dlg::OnClickedButtonConnect()
 		MessageBox(_T("연결 실패..."), _T("오류"), MB_OK | MB_ICONERROR);
 		delete m_pSerial;
 		m_pSerial = nullptr;
+		pButton->SetWindowText(_T("연결")); // 원래 캡션 복원
 	}
+}
+
+// 타이머 핸들러 추가
+void CMFCSerial5Dlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent == 1) {
+		CButton* pButton = (CButton*)GetDlgItem(IDC_BUTTON_CONNECT); // 버튼 ID로 변경
+		pButton->SetWindowText(_T("연결")); // 원래 캡션 복원
+		KillTimer(1); // 타이머 종료
+	}
+	CDialogEx::OnTimer(nIDEvent);
 }
 
 void CMFCSerial5Dlg::OnClickedButtonDisconnect()
@@ -272,7 +283,6 @@ enum RadixType { RADIX_DEC, RADIX_HEX, RADIX_OCT };
 
 RadixType GetSelectedRadix(CMFCSerial5Dlg* dlg) {
 	if (dlg->m_cHex.GetCheck()) return RADIX_HEX;
-	if (dlg->m_cOct.GetCheck()) return RADIX_OCT;
 	return RADIX_DEC;
 }
 
@@ -314,9 +324,6 @@ CString CMFCSerial5Dlg::FormatByBase(int value, const CString& direction)
 	if (m_cHex.GetCheck()) {
 		result.Format(_T("0x%X"), value); // 16진수 형식으로 변환
 	}
-	else if (m_cOct.GetCheck()) {
-		result.Format(_T("%o"), value);  // 8진수 형식으로 변환 (0 안 붙임)
-	}
 	else {
 		result.Format(_T("%d"), value);   // 10진수 형식으로 변환
 	}
@@ -347,7 +354,7 @@ void CMFCSerial5Dlg::OnClickedButtonSend()
 {
 	if (m_pSerial && m_pSerial->IsConnected()) {
 		CString strToSend;
-		GetDlgItem(IDC_EDIT_SEND)->GetWindowText(strToSend);
+		//GetDlgItem(IDC_EDIT_SEND)->GetWindowText(strToSend);
 
 		strToSend.Trim();  // 앞뒤 공백 제거
 		CString formattedValue;
@@ -405,14 +412,14 @@ void CMFCSerial5Dlg::OnClickedCheckDec()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_cHex.SetCheck(FALSE);
-	m_cOct.SetCheck(FALSE);
+	//m_cOct.SetCheck(FALSE);
 }
 
 void CMFCSerial5Dlg::OnClickedCheckHex()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_cDec.SetCheck(FALSE);
-	m_cOct.SetCheck(FALSE);
+	//m_cOct.SetCheck(FALSE);
 }
 
 void CMFCSerial5Dlg::OnClickedCheckOct()

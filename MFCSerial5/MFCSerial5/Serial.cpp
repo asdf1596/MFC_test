@@ -5,8 +5,8 @@ Serial::Serial(const char* portName, int baudRate)
     //We're not yet connected
     this->connected = false;
 
-    //Try to connect to the given port throuh CreateFile
-    this->hSerial = CreateFileA("COM9",
+    //Try to connect to the given port through CreateFile
+    this->hSerial = CreateFileA(portName,
         GENERIC_READ | GENERIC_WRITE,
         0,
         NULL,
@@ -14,15 +14,13 @@ Serial::Serial(const char* portName, int baudRate)
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 
-    //Check if the connection was successfull
+    //Check if the connection was successful
     if (this->hSerial == INVALID_HANDLE_VALUE)
     {
-        //If not success full display an Error
+        //If not successful display an Error
         if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-
-            //Print Error if neccessary
+            //Print Error if necessary
             printf("ERROR: Handle was not attached. Reason: %s not available.\n", portName);
-
         }
     }
     else
@@ -64,7 +62,6 @@ Serial::Serial(const char* portName, int baudRate)
             }
         }
     }
-
 }
 
 Serial::~Serial()
@@ -109,14 +106,11 @@ int Serial::ReadData(char* buffer, unsigned int nbChar)
         {
             return bytesRead;
         }
-
     }
 
     //If nothing has been read, or that an error was detected return 0
     return 0;
-
 }
-
 
 bool Serial::WriteData(const char* buffer, unsigned int nbChar)
 {
@@ -127,7 +121,6 @@ bool Serial::WriteData(const char* buffer, unsigned int nbChar)
     {
         //In case it don't work get comm error and return false
         ClearCommError(this->hSerial, &this->errors, &this->status);
-
         return false;
     }
     else

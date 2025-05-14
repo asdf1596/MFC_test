@@ -18,6 +18,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	CString FormatByBase(int value, const CString& direction);
+	
 
 protected:
 	HICON m_hIcon;
@@ -30,13 +31,12 @@ protected:
 	static UINT ReadDataThread(LPVOID pParam);
 	// 구현입니다.
 protected:
+	afx_msg void OnTimer(UINT_PTR nIDEvent); // OnTimer 선언
 	DECLARE_MESSAGE_MAP()
 	DWORD m_lastDataTime; // 마지막 데이터 수신 시간
 	static const DWORD TIMEOUT_MS = 5000; // 5초 타임아웃
 	bool m_bReconnecting; // 재연결 중 플래그
 
-	// 메시지 핸들러 선언
-	afx_msg LRESULT OnReconnect(WPARAM wParam, LPARAM lParam);
 public:
 	CComboBox m_port;
 	int m_eBaud;
@@ -54,7 +54,7 @@ public:
 	CString m_eSend;
 	CButton m_cDec;
 	CButton m_cHex;
-	CButton m_cOct;
+//	CButton m_cOct;
 	afx_msg void OnClickedCheckDec();
 	afx_msg void OnClickedCheckHex();
 	afx_msg void OnClickedCheckOct();
