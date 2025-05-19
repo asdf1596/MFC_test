@@ -75,7 +75,7 @@ BOOL CMFCSerial5Dlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);
 	SetIcon(m_hIcon, FALSE);
 	m_eBaud = 9600;
-	m_lastDataTime = GetTickCount(); // 타임아웃 초기화
+	m_lastDataTime = GetTickCount64(); // 타임아웃 초기화
 	m_bReconnecting = false; // 재연결 플래그 초기화
 	UpdateData(FALSE);
 
